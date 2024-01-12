@@ -11,7 +11,6 @@ class Driver(Base):
     __tablename__ = 'drivers'
 
     id = Column(Integer, primary_key=True)
-    language = Column(String(50))
     name = Column(String(100))
     nickname = Column(String(50))
     registration_number = Column(String(50), unique=True)
@@ -27,8 +26,7 @@ class Driver(Base):
 class Passenger(Base):
     __tablename__ = 'passengers'
 
-    id = Column(String, primary_key=True)
-    language = Column(String(50))
+    id = Column(Integer, primary_key=True)
     name = Column(String(100))
     registration_number = Column(String(50), unique=True)
 

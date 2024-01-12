@@ -1,7 +1,9 @@
 from telebot import types
+from translations.core import translations, get_language
 
 
-def btns():
+def init(user_id):
     return [
-        types.InlineKeyboardButton(text="Register", callback_data="register")
+        types.InlineKeyboardButton(text=translations[get_language(user_id=user_id)]["keyboards"]["register"]["register"],
+                                   callback_data="register")
     ]
