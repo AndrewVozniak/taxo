@@ -1,8 +1,12 @@
+from database.decorators.dict_cursor_decorator import dict_cursor
+
+
+@dict_cursor
 def get_user_base_info_action(cursor, user_id):
     cursor.execute("""
-        (SELECT name FROM passengers WHERE id = %s)
+        SELECT 'passenger' AS type, name FROM passengers WHERE id = %s
         UNION
-        (SELECT name FROM drivers WHERE id = %s)
+        SELECT 'driver' AS type, name FROM drivers WHERE id = %s
     """, (user_id, user_id))
 
     return cursor.fetchone()

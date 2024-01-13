@@ -1,6 +1,7 @@
 from translations.core import translations, get_language
 from database.actions.get_user_base_info import get_user_base_info_action
 from keyboards.core import register_keyboard
+from services import menu_service
 
 
 def init(bot, message, cursor, user_id):
@@ -13,7 +14,8 @@ def init(bot, message, cursor, user_id):
                              reply_markup=register_keyboard(user_id))
             return
 
-        bot.send_message(message.chat.id, "Hello, world!")
+        menu_service.main_menu(bot, message, cursor, user_id)
+        return
 
     except Exception as e:
         bot.send_message(message.chat.id,

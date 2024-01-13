@@ -17,6 +17,7 @@ def change_language(message, bot):
     else:
         bot.send_message(message.chat.id,
                          translations[get_language(user_id=message.from_user.id)]["change_language"]["error"])
+        bot.register_next_step_handler(message, change_language, bot)
         return
 
     bot.send_message(message.chat.id,
