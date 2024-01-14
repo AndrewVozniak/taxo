@@ -8,3 +8,5 @@ database_config = {
     "user": "postgres",
     "password": "admin"
 }
+
+APP_NAME = "TaxiTaxo"

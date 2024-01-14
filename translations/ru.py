@@ -38,7 +38,7 @@ dataset = {
             "message": "Имя: {name}\nМарка автомобиля: {car_brand}\nКоличество мест: {seating_capacity}\nДетское "
                        "кресло: "
                        "{has_child_seat}\nО себе: {about}\n\nВаша геолокация: {geo_position}\nРадиус "
-                       "поиска: {active_radius}\n\nАктивен: {is_active}",
+                       "поиска: {active_radius} км\n\nАктивен: {is_active}",
         },
     },
 
@@ -49,6 +49,16 @@ dataset = {
 
     "edit_data": {
         "success": "Данные успешно изменены.",
+    },
+
+    "set_my_geo_position": {
+        "message": "Отправьте вашу геолокацию:",
+        "success": "Геолокация успешно установлена. Ваша геолокация: {geo_position}",
+        "error": "Сообщение не содержит геолокацию. Геолокация не установлена.",
+
+        "radius": "Введите радиус поиска (км):",
+        "success_radius": "Радиус поиска успешно установлен. Ваш радиус поиска: {active_radius} км",
+        "error_radius": "Пожалуйста, введите число.",
     },
 
     "delete_profile": {

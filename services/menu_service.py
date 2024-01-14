@@ -2,6 +2,7 @@ from translations.core import translations, get_language
 from database.actions.get_user_base_info import get_user_base_info_action
 from database.actions.get_driver_info import get_driver_info_action
 from keyboards.core import main_menu_keyboard, passenger_my_profile_menu_keyboard, driver_my_profile_menu_keyboard
+from helpers.get_info_by_coordinates import get_info_by_coordinates
 
 
 def main_menu(bot, message, cursor, user_id):
@@ -38,6 +39,14 @@ def driver_my_profile_menu(bot, message, cursor, user_id):
 
     if user["current_location"] is None:
         user["current_location"] = translations[get_language(user_id=user_id)]["undefined"]
+
+    else:
+        try:
+            lat, lon = user["current_location"].split(",")
+            user["current_location"] = get_info_by_coordinates(lat, lon)
+
+        except ValueError:
+            user["current_location"] = translations[get_language(user_id=user_id)]["undefined"]
 
     if user["active_radius"] is None:
         user["active_radius"] = translations[get_language(user_id=user_id)]["undefined"]

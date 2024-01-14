@@ -16,7 +16,7 @@ class Driver(Base):
     seating_capacity = Column(Integer)
     has_child_seat = Column(Boolean)
     about = Column(Text)
-    current_location = Column(BYTEA)  # PostGIS geography point should be used for production
+    current_location = Column(String)
     active_radius = Column(Integer)
     is_active = Column(Boolean)
 

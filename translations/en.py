@@ -35,8 +35,8 @@ dataset = {
 
         "driver_my_profile_menu": {
             "message": "Name: {name}\nCar brand: {car_brand}\nSeating capacity: {seating_capacity}\nChild seat: {"
-                       "has_child_seat}\nAbout: {about}\n\nYour geo position: {geo_position}\nSearch radius: {"
-                       "active_radius}\n\n"
+                       "has_child_seat}\nAbout: {about}\n\nYour location: {geo_position}\nSearch radius: {"
+                       "active_radius} km\n\n"
                        "Active: {is_active}",
         },
     },
@@ -48,6 +48,16 @@ dataset = {
 
     "edit_data": {
         "success": "Data changed successfully.",
+    },
+
+    "set_my_geo_position": {
+        "message": "Send your location:",
+        "success": "Location set successfully. Your location: {geo_position}",
+        "error": "Message has no location. Location not set.",
+
+        "radius": "Enter your search radius (km):",
+        "success_radius": "Search radius set successfully. Your search radius: {active_radius} km",
+        "error_radius": "Please, enter a number.",
     },
 
     "delete_profile": {

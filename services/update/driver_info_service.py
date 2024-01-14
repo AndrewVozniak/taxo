@@ -1,3 +1,4 @@
+from helpers.get_info_by_coordinates import get_info_by_coordinates
 from keyboards.core import yes_no_keyboard
 from translations.core import translations, get_language
 from database.actions.update_row import update_action
@@ -98,3 +99,39 @@ def delete_profile_stage(message, bot, cursor, user_id):
         bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["delete_profile"]["success"])
     else:
         bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["delete_profile"]["cancel"])
+
+
+def set_my_geo_position(bot, message, cursor, user_id):
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["set_my_geo_position"]["message"])
+    bot.register_next_step_handler(message, set_my_geo_position_stage, bot, cursor, user_id)
+
+
+def set_my_geo_position_stage(message, bot, cursor, user_id):
+    if message.location is not None:
+        latitude = message.location.latitude
+        longitude = message.location.longitude
+
+        update_action(cursor, 'drivers', 'current_location', f"{latitude},{longitude}", user_id)
+
+        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["set_my_geo_position"]["success"]
+                         .format(geo_position=get_info_by_coordinates(latitude, longitude)))
+        set_my_radius(bot, message, cursor, user_id)
+    else:
+        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["set_my_geo_position"]["error"])
+
+
+def set_my_radius(bot, message, cursor, user_id):
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["set_my_geo_position"]["radius"])
+    bot.register_next_step_handler(message, set_my_radius_stage, bot, cursor, user_id)
+
+
+def set_my_radius_stage(message, bot, cursor, user_id):
+    if message.text.isdigit():
+        update_action(cursor, 'drivers', 'active_radius', message.text, user_id)
+        bot.send_message(message.chat.id,
+                         translations[get_language(user_id=user_id)]["set_my_geo_position"]["success_radius"]
+                         .format(active_radius=message.text))
+    else:
+        bot.send_message(message.chat.id,
+                         translations[get_language(user_id=user_id)]["set_my_geo_position"]["error_radius"])
+        bot.register_next_step_handler(message, set_my_radius_stage, bot, cursor, user_id)

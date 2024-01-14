@@ -36,6 +36,7 @@ def callback_inline(call):
     elif call.data == "change_language":
         change_language_service.init(bot, call.message, call.from_user.id)
 
+    # ! PASSENGER
     elif call.data == "main_menu_passenger_my_profile":
         menu_service.passenger_my_profile_menu(bot, call.message, cursor, call.from_user.id)
 
@@ -45,6 +46,7 @@ def callback_inline(call):
     elif call.data == "passenger_my_profile_menu_delete_profile":
         passenger_info_service.delete_user(bot, call.message, cursor, call.from_user.id)
 
+    # ! DRIVER
     elif call.data == "main_menu_driver_my_profile":
         menu_service.driver_my_profile_menu(bot, call.message, cursor, call.from_user.id)
 
@@ -53,6 +55,9 @@ def callback_inline(call):
 
     elif call.data == "driver_my_profile_menu_delete_profile":
         driver_info_service.delete_profile(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data == "main_menu_driver_set_my_geo_position":
+        driver_info_service.set_my_geo_position(bot, call.message, cursor, call.from_user.id)
 
 
 bot.polling(none_stop=True)
