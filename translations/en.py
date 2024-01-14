@@ -77,6 +77,12 @@ dataset = {
     "unknown": "Unknown",
     "undefined": "Undefined",
 
+    "duty": {
+        "now_you_online": "🟢 You are on duty.",
+        "now_you_offline": "🔴 You left duty.",
+    },
+
+
     "errors": {
         "unknown": "An error occurred. Please try again later.",
         "not_registered": "You are not registered in our system. Please, register first.",
@@ -98,6 +104,8 @@ dataset = {
             "driver": {
                 "my_profile": "🚗 My profile",
                 "set_my_geo_position": "📍 Set my geo position",
+                "go_online": "🟢 Go online",
+                "go_offline": "🔴 Go offline",
                 "get_nearby_drivers_count": "👨‍✈️ Get nearby passengers count",
             },
         },

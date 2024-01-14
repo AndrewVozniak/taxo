@@ -32,7 +32,7 @@ def yes_no_keyboard(user_id):
     return keyboard
 
 
-def main_menu_keyboard(user_id, user_type):
+def main_menu_keyboard(user_id, user_type, is_active=False):
     keyboard = types.InlineKeyboardMarkup()
 
     if user_type == "passenger":
@@ -40,6 +40,18 @@ def main_menu_keyboard(user_id, user_type):
 
     elif user_type == "driver":
         [keyboard.add(btn) for btn in main_menu_driver.init(user_id)]
+
+        if is_active:
+            keyboard.add(types.InlineKeyboardButton(
+                text=translations[get_language(user_id=user_id)]["keyboards"]["main_menu"]["driver"]["go_offline"],
+                callback_data="go_offline"
+            ))
+
+        else:
+            keyboard.add(types.InlineKeyboardButton(
+                text=translations[get_language(user_id=user_id)]["keyboards"]["main_menu"]["driver"]["go_online"],
+                callback_data="go_online"
+            ))
 
     return keyboard
 

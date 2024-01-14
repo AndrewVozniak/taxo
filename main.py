@@ -59,5 +59,10 @@ def callback_inline(call):
     elif call.data == "main_menu_driver_set_my_geo_position":
         driver_info_service.set_my_geo_position(bot, call.message, cursor, call.from_user.id)
 
+    elif call.data == "go_online":
+        driver_info_service.go_online(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data == "go_offline":
+        driver_info_service.go_offline(bot, call.message, cursor, call.from_user.id)
 
 bot.polling(none_stop=True)

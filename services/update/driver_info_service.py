@@ -1,5 +1,5 @@
 from helpers.get_info_by_coordinates import get_info_by_coordinates
-from keyboards.core import yes_no_keyboard
+from keyboards.core import yes_no_keyboard, main_menu_keyboard
 from translations.core import translations, get_language
 from database.actions.update_row import update_action
 from database.actions.delete_row import delete_action
@@ -135,3 +135,15 @@ def set_my_radius_stage(message, bot, cursor, user_id):
         bot.send_message(message.chat.id,
                          translations[get_language(user_id=user_id)]["set_my_geo_position"]["error_radius"])
         bot.register_next_step_handler(message, set_my_radius_stage, bot, cursor, user_id)
+
+
+def go_online(bot, message, cursor, user_id):
+    update_action(cursor, 'drivers', 'is_active', True, user_id)
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["duty"]["now_you_online"],
+                     reply_markup=main_menu_keyboard(user_id, 'driver', True))
+
+
+def go_offline(bot, message, cursor, user_id):
+    update_action(cursor, 'drivers', 'is_active', False, user_id)
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["duty"]["now_you_offline"],
+                     reply_markup=main_menu_keyboard(user_id, 'driver', False))
