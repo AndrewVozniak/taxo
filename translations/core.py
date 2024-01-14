@@ -18,6 +18,11 @@ def get_temporary_language(user_id):
     return users_temporary_language.get(user_id, default_language)
 
 
+def delete_temporary_language(user_id):
+    if user_id in users_temporary_language:
+        del users_temporary_language[user_id]
+
+
 def get_language(user_id):
     user_language = get_temporary_language(user_id)
 

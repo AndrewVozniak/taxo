@@ -1,5 +1,5 @@
 from telebot import types
-from keyboards.buttons import register, main_menu_driver, main_menu_passenger
+from keyboards.buttons import register, main_menu_driver, main_menu_passenger, main_menu_my_profile_passenger, main_menu_my_profile_driver
 from translations.core import get_language, translations
 
 
@@ -47,14 +47,14 @@ def main_menu_keyboard(user_id, user_type):
 def passenger_my_profile_menu_keyboard(user_id):
     keyboard = types.InlineKeyboardMarkup()
 
-    keyboard.add(types.InlineKeyboardButton(
-        text=translations[get_language(user_id=user_id)]["keyboards"]["passenger_my_profile_menu"]["edit_name"],
-        callback_data="passenger_my_profile_menu_edit_name"))
-    keyboard.add(types.InlineKeyboardButton(
-        text=translations[get_language(user_id=user_id)]["keyboards"]["passenger_my_profile_menu"]["change_language"],
-        callback_data="change_language"))
-    keyboard.add(types.InlineKeyboardButton(
-        text=translations[get_language(user_id=user_id)]["keyboards"]["passenger_my_profile_menu"]["back"],
-        callback_data="main_menu"))
+    [keyboard.add(btn) for btn in main_menu_my_profile_passenger.init(user_id)]
+
+    return keyboard
+
+
+def driver_my_profile_menu_keyboard(user_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    [keyboard.add(btn) for btn in main_menu_my_profile_driver.init(user_id)]
 
     return keyboard

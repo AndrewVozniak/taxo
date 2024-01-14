@@ -32,6 +32,28 @@ dataset = {
         "passenger_my_profile_menu": {
             "message": "Your profile info:\n\nName: {0}",
         },
+
+        "driver_my_profile_menu": {
+            "message": "Name: {name}\nCar brand: {car_brand}\nSeating capacity: {seating_capacity}\nChild seat: {"
+                       "has_child_seat}\nAbout: {about}\n\nYour geo position: {geo_position}\nSearch radius: {"
+                       "active_radius}\n\n"
+                       "Active: {is_active}",
+        },
+    },
+
+    "edit_name": {
+        "message": "Enter your new name:",
+        "success": "Name changed successfully.",
+    },
+
+    "edit_data": {
+        "success": "Data changed successfully.",
+    },
+
+    "delete_profile": {
+        "message": "Are you sure you want to delete your profile?",
+        "success": "Profile deleted successfully.",
+        "cancel": "Profile deletion canceled.",
     },
 
     "change_language": {
@@ -42,11 +64,14 @@ dataset = {
 
     "yes": "Yes",
     "no": "No",
+    "unknown": "Unknown",
+    "undefined": "Undefined",
 
     "errors": {
         "unknown": "An error occurred. Please try again later.",
         "not_registered": "You are not registered in our system. Please, register first.",
         "choose_from_list": "Please, choose one of the options.",
+        "enter_number": "Please, enter a number.",
     },
 
     "keyboards": {
@@ -63,11 +88,19 @@ dataset = {
             "driver": {
                 "my_profile": "🚗 My profile",
                 "set_my_geo_position": "📍 Set my geo position",
-                "get_nearby_passengers_count": "👨‍✈️ Get nearby passengers count",
+                "get_nearby_drivers_count": "👨‍✈️ Get nearby passengers count",
             },
         },
         "passenger_my_profile_menu": {
             "edit_name": "✏️ Edit name",
+            "delete_profile": "❌ Delete profile",
+            "change_language": "🌐 Change language",
+            "back": "🔙 Back",
+        },
+
+        "driver_my_profile_menu": {
+            "edit_data": "✏️ Edit data",
+            "delete_profile": "❌ Delete profile",
             "change_language": "🌐 Change language",
             "back": "🔙 Back",
         },
