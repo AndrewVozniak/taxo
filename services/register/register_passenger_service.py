@@ -1,9 +1,11 @@
 from translations.core import translations, get_language
 from database.actions import create_passenger
+from telebot import types
 
 
 def init(bot, message, cursor, user_id):
-    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"])
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"],
+                     reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(message, enter_name_stage, bot, cursor, user_id)
 
 

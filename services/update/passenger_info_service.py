@@ -1,5 +1,6 @@
 from keyboards.core import yes_no_keyboard
 from translations.core import translations, get_language
+from telebot import types
 
 
 def edit_name(bot, message, cursor, user_id):
@@ -34,12 +35,14 @@ def delete_user_step(message, bot, cursor, user_id):
         delete_action(cursor, "passengers", user_id)
 
         bot.send_message(message.chat.id,
-                         translations[get_language(user_id=user_id)]["delete_profile"]["success"])
+                         translations[get_language(user_id=user_id)]["delete_profile"]["success"],
+                         reply_markup=types.ReplyKeyboardRemove())
         return
 
     elif message.text == translations[get_language(user_id=user_id)]["no"]:
         bot.send_message(message.chat.id,
-                         translations[get_language(user_id=user_id)]["delete_profile"]["cancel"])
+                         translations[get_language(user_id=user_id)]["delete_profile"]["cancel"],
+                         reply_markup=types.ReplyKeyboardRemove())
         return
 
     else:

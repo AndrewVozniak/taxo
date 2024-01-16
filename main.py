@@ -2,7 +2,7 @@ import telebot
 import config
 
 from database import connector
-from services import start_service, change_language_service, menu_service, search_service
+from services import start_service, change_language_service, menu_service, search_service, call_service
 from services.register import register_service
 from services.update import passenger_info_service, driver_info_service
 
@@ -48,6 +48,9 @@ def callback_inline(call):
 
     elif call.data == "passenger_my_profile_menu_delete_profile":
         passenger_info_service.delete_user(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data == "main_menu_passenger_call_taxi":
+        call_service.init(bot, call.message, cursor, call.from_user.id)
 
     # ! DRIVER
     elif call.data == "main_menu_driver_my_profile":

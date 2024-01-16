@@ -3,6 +3,7 @@ from keyboards.core import yes_no_keyboard, main_menu_keyboard
 from translations.core import translations, get_language
 from database.actions.update_row import update_action
 from database.actions.delete_row import delete_action
+from telebot import types
 
 
 def edit_data(bot, message, cursor, user_id):
@@ -42,7 +43,9 @@ def enter_is_child_seat_stage(message, bot, cursor, user_id, name, car_brand, se
         bot.register_next_step_handler(message, enter_is_child_seat_stage, bot, cursor, user_id, name, car_brand,
                                        seating_capacity)
         return
-    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_about"])
+    bot.send_message(message.chat.id,
+                     translations[get_language(user_id=user_id)]["register"]["enter_about"],
+                     reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(message, enter_about_stage, bot, cursor, user_id, name, car_brand, seating_capacity,
                                    is_child_seat)
 
@@ -76,9 +79,11 @@ def is_it_correct_stage(message, bot, cursor, user_id, name, car_brand, seating_
         for key, value in driver_info.items():
             update_action(cursor, 'drivers', key, value, user_id)
 
-        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["edit_data"]["success"])
+        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["edit_data"]["success"],
+                         reply_markup=main_menu_keyboard(user_id, 'driver', True))
     elif is_correct == translations[get_language(user_id=user_id)]["no"]:
-        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"])
+        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"],
+                         reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, enter_name_stage, bot, cursor, user_id)
     else:
         bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["errors"]["choose_from_list"])

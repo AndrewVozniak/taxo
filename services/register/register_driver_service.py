@@ -1,9 +1,12 @@
 from translations.core import translations, get_language
 from keyboards.core import yes_no_keyboard
+from telebot import types
 
 
 def init(bot, message, cursor, user_id):
-    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"])
+    bot.send_message(message.chat.id,
+                     translations[get_language(user_id=user_id)]["register"]["enter_name"],
+                     reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(message, enter_name_stage, bot, cursor, user_id)
 
 
@@ -41,12 +44,15 @@ def enter_is_child_seat_stage(message, bot, cursor, user_id, name, car_brand, se
 
     if is_child_seat != translations[get_language(user_id=user_id)]["yes"] and is_child_seat != \
             translations[get_language(user_id=user_id)]["no"]:
-        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["errors"]["choose_from_list"])
+        bot.send_message(message.chat.id,
+                         translations[get_language(user_id=user_id)]["errors"]["choose_from_list"])
         bot.register_next_step_handler(message, enter_is_child_seat_stage,
                                        bot, cursor, user_id, name, car_brand, seating_capacity)
         return
 
-    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_about"])
+    bot.send_message(message.chat.id,
+                     translations[get_language(user_id=user_id)]["register"]["enter_about"],
+                     reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(message, enter_about_stage,
                                    bot, cursor, user_id, name, car_brand, seating_capacity, is_child_seat)
 
@@ -82,10 +88,14 @@ def confirm_stage(message, bot, cursor, user_id, name, car_brand, seating_capaci
                                                     about)
 
         if driver is None:
-            bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["errors"]["unknown"])
+            bot.send_message(message.chat.id,
+                             translations[get_language(user_id=user_id)]["errors"]["unknown"],
+                             reply_markup=types.ReplyKeyboardRemove())
             return
     elif is_correct == translations[get_language(user_id=user_id)]["no"]:
-        bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["enter_name"])
+        bot.send_message(message.chat.id,
+                         translations[get_language(user_id=user_id)]["register"]["enter_name"],
+                         reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, enter_name_stage,
                                        bot, cursor, user_id)
         return

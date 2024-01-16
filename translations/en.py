@@ -77,6 +77,25 @@ dataset = {
         "send_location": "Send your location.",
     },
 
+    "call_driver": {
+        "send_location": "Send your departure point:",
+        "send_destination": "Send your destination point:",
+
+        "send_passengers_count": "Enter the number of passengers:",
+        "do_you_have_baggage": "Do you have baggage?",
+        "do_you_need_child_seat": "Do you need a child seat?",
+
+        "drivers_list": "Drivers list:",
+        "driver_info": "Name: {name}\nCar brand: {car_brand}\nChild seat: {has_child_seat}"
+                       "\nAbout: {about}\nDistance: {distance} km",
+
+        "no_drivers": "Unfortunately, there are no drivers near you. Try again later.",
+
+        "driver_chosen": "You have chosen driver {name}.",
+
+        "message_dont_have_location": "Message has no location. Point not set.",
+    },
+
     "yes": "Yes",
     "no": "No",
     "unknown": "Unknown",
@@ -86,7 +105,6 @@ dataset = {
         "now_you_online": "🟢 You are on duty.",
         "now_you_offline": "🔴 You left duty.",
     },
-
 
     "errors": {
         "unknown": "An error occurred. Please try again later.",
@@ -127,6 +145,9 @@ dataset = {
             "delete_profile": "❌ Delete profile",
             "change_language": "🌐 Change language",
             "back": "🔙 Back",
+        },
+        "call_driver": {
+            "choose_driver": "🟢 Choose driver",
         },
     }
 }

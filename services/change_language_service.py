@@ -1,5 +1,6 @@
 from translations.core import set_temporary_language, get_language, translations
 from keyboards.core import change_language_keyboard
+from telebot import types
 
 
 def init(bot, message, user_id):
@@ -21,4 +22,5 @@ def change_language(message, bot):
         return
 
     bot.send_message(message.chat.id,
-                     translations[get_language(user_id=message.from_user.id)]["change_language"]["success"])
+                     translations[get_language(user_id=message.from_user.id)]["change_language"]["success"],
+                     reply_markup=types.ReplyKeyboardRemove())
