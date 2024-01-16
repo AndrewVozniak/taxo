@@ -2,7 +2,7 @@ import telebot
 import config
 
 from database import connector
-from services import start_service, change_language_service, menu_service
+from services import start_service, change_language_service, menu_service, search_service
 from services.register import register_service
 from services.update import passenger_info_service, driver_info_service
 
@@ -36,6 +36,9 @@ def callback_inline(call):
     elif call.data == "change_language":
         change_language_service.init(bot, call.message, call.from_user.id)
 
+    elif call.data == "get_nearby_drivers_count":
+        search_service.get_nearby_drivers_count(bot, call.message, cursor, call.from_user.id)
+
     # ! PASSENGER
     elif call.data == "main_menu_passenger_my_profile":
         menu_service.passenger_my_profile_menu(bot, call.message, cursor, call.from_user.id)
@@ -64,5 +67,6 @@ def callback_inline(call):
 
     elif call.data == "go_offline":
         driver_info_service.go_offline(bot, call.message, cursor, call.from_user.id)
+
 
 bot.polling(none_stop=True)

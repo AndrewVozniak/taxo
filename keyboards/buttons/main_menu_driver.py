@@ -12,6 +12,6 @@ def init(user_id):
             callback_data="main_menu_driver_set_my_geo_position"),
         types.InlineKeyboardButton(
             text=translations[get_language(user_id=user_id)]["keyboards"]["main_menu"]["driver"]["get_nearby_drivers_count"],
-            callback_data="main_menu_driver_get_nearby_drivers_count")
+            callback_data="get_nearby_drivers_count")
         ]
 

@@ -10,3 +10,5 @@ database_config = {
 }
 
 APP_NAME = "TaxiTaxo"
+DEFAULT_SEARCH_RADIUS = 5
+DEFAULT_LANGUAGE = "en"

@@ -72,6 +72,11 @@ dataset = {
         "error": "Please, choose one of the options.",
     },
 
+    "nearby_drivers_count": {
+        "message": "Near you: {count} drivers.",
+        "send_location": "Send your location.",
+    },
+
     "yes": "Yes",
     "no": "No",
     "unknown": "Unknown",
@@ -88,6 +93,7 @@ dataset = {
         "not_registered": "You are not registered in our system. Please, register first.",
         "choose_from_list": "Please, choose one of the options.",
         "enter_number": "Please, enter a number.",
+        "enter_location": "Please, send your location.",
     },
 
     "keyboards": {
@@ -106,7 +112,7 @@ dataset = {
                 "set_my_geo_position": "📍 Set my geo position",
                 "go_online": "🟢 Go online",
                 "go_offline": "🔴 Go offline",
-                "get_nearby_drivers_count": "👨‍✈️ Get nearby passengers count",
+                "get_nearby_drivers_count": "👨‍✈️ Get nearby drivers count",
             },
         },
         "passenger_my_profile_menu": {

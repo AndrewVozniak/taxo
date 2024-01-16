@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import ENUM, BYTEA
 from config import database_config
+from sqlalchemy import BigInteger
 
 Base = declarative_base()
 
@@ -10,7 +11,7 @@ Base = declarative_base()
 class Driver(Base):
     __tablename__ = 'drivers'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     name = Column(String(100))
     car_brand = Column(String(100))
     seating_capacity = Column(Integer)
@@ -24,7 +25,7 @@ class Driver(Base):
 class Passenger(Base):
     __tablename__ = 'passengers'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     name = Column(String(100))
 
 

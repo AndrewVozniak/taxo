@@ -1,11 +1,12 @@
 from translations import ru, en
+from config import DEFAULT_LANGUAGE
 
 translations = {
     'ru': ru.dataset,
     'en': en.dataset
 }
 
-default_language = 'en'
+default_language = DEFAULT_LANGUAGE
 
 users_temporary_language = {}
 
