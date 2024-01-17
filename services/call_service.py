@@ -3,6 +3,8 @@ from database.actions.get_user_base_info import get_user_base_info_action
 from keyboards.core import yes_no_keyboard
 from telebot import types
 from helpers.get_nearby_drivers import get_nearby_drivers_by_filters
+from temporary_storages.unapproved_calls import unapproved_calls
+from helpers.get_info_by_coordinates import get_info_by_coordinates
 
 
 def init(bot, message, cursor, user_id):
@@ -125,11 +127,22 @@ def get_child_seat_stage(message, bot, cursor, user_id, location, destination, p
         )
         return
 
+    unapproved_calls[user_id] = {
+        "location": location,
+        "destination": destination,
+        "passengers_count": passengers_count,
+        "baggage": baggage,
+        "child_seat": child_seat,
+        "submitted": False,
+    }
+
     bot.send_message(
         chat_id=message.chat.id,
         text=translations[get_language(user_id=message.from_user.id)]["call_driver"]["drivers_list"],
         reply_markup=types.ReplyKeyboardRemove(),
     )
+
+    drivers = drivers[:12]
 
     for driver in drivers:
         keyboard = types.InlineKeyboardMarkup()
@@ -151,3 +164,35 @@ def get_child_seat_stage(message, bot, cursor, user_id, location, destination, p
         )
 
     # TODO: Отправка сообщения водителю о том что его выбрали с отправкой DESTINATION
+
+
+def choose_driver(bot, message, cursor, user_id, driver_id):
+    call = unapproved_calls[user_id]
+
+    user = get_user_base_info_action(cursor, user_id)
+
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["submit"],
+        callback_data=f"trip_submitted_{driver_id}",
+    ))
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["you_choose_driver"]
+    )
+
+    bot.send_message(
+        chat_id=driver_id,
+        text=translations[get_language(user_id=driver_id)]["call_driver"]["you_were_chosen"].format(
+            name=user["name"],
+            location=get_info_by_coordinates(call["location"].latitude, call["location"].longitude),
+            destination=get_info_by_coordinates(call["destination"].latitude, call["destination"].longitude),
+            passengers_count=call["passengers_count"],
+            baggage=translations[get_language(user_id=driver_id)]["yes"] if call["baggage"] else
+            translations[get_language(user_id=driver_id)]["no"],
+            child_seat=translations[get_language(user_id=driver_id)]["yes"] if call["child_seat"] else
+            translations[get_language(user_id=driver_id)]["no"],
+        ),
+        reply_markup=keyboard
+    )

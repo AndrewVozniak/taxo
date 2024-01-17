@@ -71,5 +71,9 @@ def callback_inline(call):
     elif call.data == "go_offline":
         driver_info_service.go_offline(bot, call.message, cursor, call.from_user.id)
 
+    elif call.data.startswith("call_driver_"):
+        call_service.choose_driver(bot, call.message, cursor, call.from_user.id, call.data.split("_")[2])
+
+
 
 bot.polling(none_stop=True)

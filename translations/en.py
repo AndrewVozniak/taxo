@@ -94,6 +94,17 @@ dataset = {
         "driver_chosen": "You have chosen driver {name}.",
 
         "message_dont_have_location": "Message has no location. Point not set.",
+
+        "you_choose_driver": "The driver has been chosen.\n\n"
+                             "You will be notified when the driver accepts your request.",
+
+        "you_were_chosen": "You were chosen by {name}."
+                           "\n\nDeparture point: {location}"
+                           "\nDestination point: {destination}"
+                           "\n\nPassengers count: {passengers_count}"
+                           "\nBaggage: {baggage}"
+                           "\nChild seat: {child_seat}"
+                           "\n\nPlease, contact the passenger.",
     },
 
     "yes": "Yes",
@@ -148,6 +159,7 @@ dataset = {
         },
         "call_driver": {
             "choose_driver": "🟢 Choose driver",
+            "submit": "✅ Submit",
         },
     }
 }
