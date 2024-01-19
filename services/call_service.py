@@ -1,10 +1,18 @@
+import keyboards.core
+from config import DEFAULT_WAITING_TIME_OUT, DEFAULT_ARRIVAL_TIME_OUT
 from translations.core import translations, get_language
 from database.actions.get_user_base_info import get_user_base_info_action
+from database.actions.register_trip import register_trip_action
+from database.actions.update_row import update_action
 from keyboards.core import yes_no_keyboard
 from telebot import types
 from helpers.get_nearby_drivers import get_nearby_drivers_by_filters
-from temporary_storages.unapproved_calls import unapproved_calls
+from temporary_storages.main import unapproved_calls
 from helpers.get_info_by_coordinates import get_info_by_coordinates
+from datetime import datetime, timedelta
+from jobs.main import scheduler, cancel_call_if_not_confirmed, show_cancel_button_if_arrival_time_too_long
+from database.actions.get_trip_details_by_passenger_id import get_trip_details_by_passenger_id_action
+from database.actions.get_trip_details_by_driver_id import get_trip_details_by_driver_id_action
 
 
 def init(bot, message, cursor, user_id):
@@ -163,18 +171,44 @@ def get_child_seat_stage(message, bot, cursor, user_id, location, destination, p
             reply_markup=keyboard,
         )
 
-    # TODO: Отправка сообщения водителю о том что его выбрали с отправкой DESTINATION
-
 
 def choose_driver(bot, message, cursor, user_id, driver_id):
-    call = unapproved_calls[user_id]
+    try:
+        call = unapproved_calls[user_id]
+    except KeyError:
+        print("Call not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    try:
+        if call["driver_id"] is not None:
+            print("Driver already chosen")
+            bot.send_message(
+                chat_id=message.chat.id,
+                text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+            )
+            return
+    except KeyError:
+        pass
+
+    driver_id = int(driver_id)
+    call["driver_id"] = driver_id
+    call["requested_at"] = datetime.now()
+
+    scheduler.add_job(func=cancel_call_if_not_confirmed,
+                      id='cancel_call_if_not_confirmed',
+                      run_date=datetime.now() + timedelta(seconds=DEFAULT_WAITING_TIME_OUT),
+                      args=[bot, cursor, user_id])
 
     user = get_user_base_info_action(cursor, user_id)
 
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(
-        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["submit"],
-        callback_data=f"trip_submitted_{driver_id}",
+        text=translations[get_language(user_id=driver_id)]["keyboards"]["call_driver"]["submit"],
+        callback_data=f"submit_trip_{driver_id}",
     ))
 
     bot.send_message(
@@ -195,4 +229,216 @@ def choose_driver(bot, message, cursor, user_id, driver_id):
             translations[get_language(user_id=driver_id)]["no"],
         ),
         reply_markup=keyboard
+    )
+
+
+def submit(bot, message, cursor, user_id, driver_id):
+    call = None
+    passenger_id = None
+
+    for key, unapproved_call in unapproved_calls.items():
+        if int(unapproved_call["driver_id"]) == int(driver_id):
+            call = unapproved_call
+            passenger_id = key
+            break
+
+    if call is None:
+        print("Call not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    try:
+        if call["confirmed_at"] is not None:
+            print("Call already confirmed")
+            bot.send_message(
+                chat_id=message.chat.id,
+                text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+            )
+            return
+    except KeyError:
+        pass
+
+    call["confirmed_at"] = datetime.now()
+
+    scheduler.remove_job('cancel_call_if_not_confirmed')
+    scheduler.add_job(func=show_cancel_button_if_arrival_time_too_long,
+                      id='show_cancel_button_if_arrival_time_too_long',
+                      run_date=datetime.now() + timedelta(seconds=DEFAULT_ARRIVAL_TIME_OUT),
+                      args=[bot, cursor, passenger_id])
+
+    call["location"] = f"{call['location'].latitude},{call['location'].longitude}"
+    call["destination"] = f"{call['destination'].latitude},{call['destination'].longitude}"
+
+    register_trip_action(cursor=cursor,
+                         passenger_id=passenger_id,
+                         driver_id=driver_id,
+                         passenger_count=call["passengers_count"],
+                         has_luggage=call["baggage"],
+                         has_child_seat=call["child_seat"],
+                         pickup_location=call["location"],
+                         dropoff_location=call["destination"],
+                         requested_at=call["requested_at"],
+                         confirmed_at=call["confirmed_at"])
+
+    bot.send_message(
+        chat_id=user_id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["trip_accepted_driver"].format(
+            name=get_user_base_info_action(cursor, user_id)["name"],
+        ),
+        reply_markup=keyboards.core.im_arrived_keyboard(user_id)
+    )
+
+    bot.send_message(
+        chat_id=passenger_id,
+        text=translations[get_language(user_id=passenger_id)]["call_driver"]["trip_accepted_passenger"].format(
+            name=get_user_base_info_action(cursor, driver_id)["name"],
+        ),
+    )
+
+    del unapproved_calls[passenger_id]
+
+
+def im_arrived(bot, message, cursor, user_id):
+    trip = get_trip_details_by_driver_id_action(cursor, user_id)
+
+    if trip is None:
+        print("Trip not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    if trip["status"] != "waiting":
+        print("Trip status is not en_route")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    try:
+        scheduler.remove_job('show_cancel_button_if_arrival_time_too_long')
+    except Exception as e:
+        print(e)
+
+    if trip is None:
+        print("Trip not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    update_action(cursor, "trips", "status", "driver_arrived", trip["id"])
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["driver_arrived_driver"],
+        reply_markup=keyboards.core.start_trip_keyboard(user_id)
+    )
+
+    bot.send_message(
+        chat_id=trip["passenger_id"],
+        text=translations[get_language(user_id=trip["passenger_id"])]["call_driver"]["driver_arrived_passenger"],
+    )
+
+
+def start_trip(bot, message, cursor, user_id):
+    trip = get_trip_details_by_driver_id_action(cursor, user_id)
+
+    if trip is None:
+        print("Trip not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    if trip["status"] != "driver_arrived":
+        print("Trip status is not driver_arrived")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    update_action(cursor, "trips", "status", "en_route", trip["id"])
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["trip_started_driver"],
+        reply_markup=keyboards.core.end_trip_keyboard(user_id)
+    )
+
+    bot.send_message(
+        chat_id=trip["passenger_id"],
+        text=translations[get_language(user_id=trip["passenger_id"])]["call_driver"]["trip_started_passenger"],
+    )
+
+
+def end_trip(bot, message, cursor, user_id):
+    trip = get_trip_details_by_driver_id_action(cursor, user_id)
+
+    if trip is None:
+        print("Trip not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    if trip["status"] != "en_route":
+        print("Trip status is not en_route")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    update_action(cursor, "trips", "status", "completed", trip["id"])
+    update_action(cursor, "trips", "completed_at", datetime.now(), trip["id"])
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["trip_ended"],
+    )
+
+    bot.send_message(
+        chat_id=trip["passenger_id"],
+        text=translations[get_language(user_id=trip["passenger_id"])]["call_driver"]["trip_ended"],
+    )
+
+
+def cancel_trip(bot, message, cursor, user_id):
+    trip = get_trip_details_by_passenger_id_action(cursor, user_id)
+
+    if trip is None:
+        print("Trip not found")
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["unknown"],
+        )
+        return
+
+    if trip["status"] != "waiting":
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["call_driver"]["cant_cancel"],
+        )
+        return
+
+    update_action(cursor, "trips", "status", "cancelled", trip["id"])
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["call_driver"]["you_cancel"],
+    )
+
+    bot.send_message(
+        chat_id=trip["driver_id"],
+        text=translations[get_language(user_id=trip["driver_id"])]["call_driver"]["trip_canceled"],
     )

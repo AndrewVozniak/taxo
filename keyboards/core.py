@@ -1,5 +1,6 @@
 from telebot import types
-from keyboards.buttons import register, main_menu_driver, main_menu_passenger, main_menu_my_profile_passenger, main_menu_my_profile_driver
+from keyboards.buttons import register, main_menu_driver, main_menu_passenger, main_menu_my_profile_passenger, \
+    main_menu_my_profile_driver
 from translations.core import get_language, translations
 
 
@@ -68,5 +69,49 @@ def driver_my_profile_menu_keyboard(user_id):
     keyboard = types.InlineKeyboardMarkup()
 
     [keyboard.add(btn) for btn in main_menu_my_profile_driver.init(user_id)]
+
+    return keyboard
+
+
+def cancel_trip_keyboard(user_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["cancel_trip"],
+        callback_data="cancel_trip"
+    ))
+
+    return keyboard
+
+
+def im_arrived_keyboard(user_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["im_arrived"],
+        callback_data="im_arrived"
+    ))
+
+    return keyboard
+
+
+def start_trip_keyboard(user_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["start_trip"],
+        callback_data="start_trip"
+    ))
+
+    return keyboard
+
+
+def end_trip_keyboard(user_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["end_trip"],
+        callback_data="end_trip"
+    ))
 
     return keyboard

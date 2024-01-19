@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, Float, DateTime, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects.postgresql import ENUM, BYTEA
+from sqlalchemy.dialects.postgresql import ENUM
 from config import database_config
 from sqlalchemy import BigInteger
 
@@ -33,14 +33,14 @@ class Trip(Base):
     __tablename__ = 'trips'
 
     id = Column(Integer, primary_key=True)
-    passenger_id = Column(Integer, ForeignKey('passengers.id'))
-    driver_id = Column(Integer, ForeignKey('drivers.id'), nullable=True)
+    passenger_id = Column(BigInteger, ForeignKey('passengers.id'))
+    driver_id = Column(BigInteger, ForeignKey('drivers.id'), nullable=True)
     passenger_count = Column(Integer)
     has_luggage = Column(Boolean)
-    has_child_seat = Column(Integer)
-    pickup_location = Column(BYTEA)  # PostGIS geography point should be used for production
-    dropoff_location = Column(BYTEA)  # PostGIS geography point should be used for production
-    status = Column(ENUM('waiting', 'en_route', 'completed', 'cancelled', name='trip_statuses'))
+    has_child_seat = Column(Boolean)
+    pickup_location = Column(String)
+    dropoff_location = Column(String)
+    status = Column(ENUM('waiting', 'en_route', 'driver_arrived', 'completed', 'cancelled', name='trip_statuses'))
     requested_at = Column(DateTime)
     confirmed_at = Column(DateTime, nullable=True)
     completed_at = Column(DateTime, nullable=True)
@@ -64,7 +64,7 @@ class Charity(Base):
     __tablename__ = 'charity'
 
     id = Column(Integer, primary_key=True)
-    donor_id = Column(Integer, ForeignKey('passengers.id'))
+    donor_id = Column(BigInteger, ForeignKey('passengers.id'))
     amount = Column(Float)
     donation_date = Column(DateTime)
 
@@ -84,7 +84,7 @@ class Block(Base):
     __tablename__ = 'blocks'
 
     id = Column(Integer, primary_key=True)
-    passenger_id = Column(Integer, ForeignKey('passengers.id'))
+    passenger_id = Column(BigInteger, ForeignKey('passengers.id'))
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     reason = Column(Text)

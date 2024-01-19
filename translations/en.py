@@ -104,7 +104,28 @@ dataset = {
                            "\n\nPassengers count: {passengers_count}"
                            "\nBaggage: {baggage}"
                            "\nChild seat: {child_seat}"
-                           "\n\nPlease, contact the passenger.",
+                           "\n\nTo accept the request, click the button below.",
+
+        "trip_accepted_passenger": "Your order has been accepted by the driver {name}.",
+        "trip_accepted_driver": "You accepted the order of the passenger {name}. \n\n"
+                                "When you arrive at the departure point, click the button below.",
+
+        "time_over_cancel": "The time for accepting the order has expired. The order has been canceled.",
+        "time_over_cancel_driver": "The time for accepting the order from the passenger {name} has expired. \n\n"
+                                   "The order has been canceled.",
+
+        "you_can_cancel": "You can cancel the order by clicking the button below.",
+        "you_cancel": "You canceled the order.",
+        "trip_canceled": "The order was canceled.",
+        "cant_cancel": "You cannot cancel the order because the driver has already arrived at the departure point.",
+
+        "driver_arrived_driver": "You arrived at the departure point. \n\n "
+                                 "When the passenger gets into the car, click the button below.",
+        "driver_arrived_passenger": "The driver has arrived at the departure point. Please, go to the car.",
+
+        "trip_started_driver": "You started the trip. \n\n When you arrive at the destination, click the button below.",
+        "trip_started_passenger": "The trip has started.",
+        "trip_ended": "The trip is over. Thank you for using our service!",
     },
 
     "yes": "Yes",
@@ -160,6 +181,10 @@ dataset = {
         "call_driver": {
             "choose_driver": "🟢 Choose driver",
             "submit": "✅ Submit",
+            "cancel_trip": "❌ Cancel trip",
+            "im_arrived": "🚗 I'm arrived",
+            "start_trip": "🚕 Start trip",
+            "end_trip": "🏁 End trip",
         },
     }
 }

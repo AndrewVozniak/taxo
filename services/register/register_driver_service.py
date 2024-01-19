@@ -106,4 +106,5 @@ def confirm_stage(message, bot, cursor, user_id, name, car_brand, seating_capaci
                                        bot, cursor, user_id, name, car_brand, seating_capacity, is_child_seat, about)
         return
 
-    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["success_register"])
+    bot.send_message(message.chat.id, translations[get_language(user_id=user_id)]["register"]["success_register"],
+                     reply_markup=types.ReplyKeyboardRemove())
