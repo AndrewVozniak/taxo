@@ -79,17 +79,6 @@ class Advertisement(Base):
     end_date = Column(DateTime)
     is_active = Column(Boolean)
 
-
-class Block(Base):
-    __tablename__ = 'blocks'
-
-    id = Column(Integer, primary_key=True)
-    passenger_id = Column(BigInteger, ForeignKey('passengers.id'))
-    start_time = Column(DateTime)
-    end_time = Column(DateTime)
-    reason = Column(Text)
-
-
 # Настройка движка базы данных
 engine = create_engine(f"postgresql://{database_config['user']}:{database_config['password']}@{database_config['host']}/{database_config['db']}")
 

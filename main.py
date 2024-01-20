@@ -52,6 +52,9 @@ def callback_inline(call):
     elif call.data == "main_menu_passenger_call_taxi":
         call_service.init(bot, call.message, cursor, call.from_user.id)
 
+    elif call.data == "main_menu_passenger_book_taxi":
+        call_service.init(bot, call.message, cursor, call.from_user.id, True)
+
     elif call.data == "cancel_trip":
         call_service.cancel_trip(bot, call.message, cursor, call.from_user.id)
 
@@ -88,6 +91,9 @@ def callback_inline(call):
 
     elif call.data == "end_trip":
         call_service.end_trip(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data.startswith("sub_booking"):
+        call_service.submit_booking(bot, call.message, cursor, call.from_user.id, call.data.split("_")[2])
 
 
 bot.polling(none_stop=True)

@@ -25,10 +25,13 @@ def choose_profile_type_keyboard(user_id):
     return keyboard
 
 
-def yes_no_keyboard(user_id):
+def yes_no_keyboard(user_id, with_cancel=False):
     keyboard = types.ReplyKeyboardMarkup()
     keyboard.row(translations[get_language(user_id=user_id)]["yes"])
     keyboard.row(translations[get_language(user_id=user_id)]["no"])
+
+    if with_cancel:
+        keyboard.row(translations[get_language(user_id=user_id)]["keyboards"]["cancel"])
 
     return keyboard
 
@@ -57,6 +60,17 @@ def main_menu_keyboard(user_id, user_type, is_active=False):
     return keyboard
 
 
+def accept_booking_driver_keyboard(user_id, hash_id):
+    keyboard = types.InlineKeyboardMarkup()
+
+    keyboard.add(types.InlineKeyboardButton(
+        text=translations[get_language(user_id=user_id)]["keyboards"]["call_driver"]["booking"]["submit"],
+        callback_data="sub_booking_{hash_id}".format(hash_id=hash_id)
+    ))
+
+    return keyboard
+
+
 def passenger_my_profile_menu_keyboard(user_id):
     keyboard = types.InlineKeyboardMarkup()
 
@@ -69,6 +83,13 @@ def driver_my_profile_menu_keyboard(user_id):
     keyboard = types.InlineKeyboardMarkup()
 
     [keyboard.add(btn) for btn in main_menu_my_profile_driver.init(user_id)]
+
+    return keyboard
+
+
+def cancel_keyboard(user_id):
+    keyboard = types.ReplyKeyboardMarkup()
+    keyboard.row(translations[get_language(user_id=user_id)]["keyboards"]["cancel"])
 
     return keyboard
 

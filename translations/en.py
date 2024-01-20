@@ -60,6 +60,8 @@ dataset = {
         "error_radius": "Please, enter a number.",
     },
 
+    "you_have_been_blocked": "Too many attempts. You have been blocked for {block_duration} minutes.",
+
     "delete_profile": {
         "message": "Are you sure you want to delete your profile?",
         "success": "Profile deleted successfully.",
@@ -107,7 +109,8 @@ dataset = {
                            "\n\nTo accept the request, click the button below.",
 
         "trip_accepted_passenger": "Your order has been accepted by the driver {name}.",
-        "trip_accepted_driver": "You accepted the order of the passenger {name}. \n\n"
+        "trip_accepted_driver": "You accepted the order of the passenger {name}. \n"
+                                "Telegram for communication: @{telegram_username}. \n\n"
                                 "When you arrive at the departure point, click the button below.",
 
         "time_over_cancel": "The time for accepting the order has expired. The order has been canceled.",
@@ -126,6 +129,27 @@ dataset = {
         "trip_started_driver": "You started the trip. \n\n When you arrive at the destination, click the button below.",
         "trip_started_passenger": "The trip has started.",
         "trip_ended": "The trip is over. Thank you for using our service!",
+
+        "booking": {
+            "send_date": "Send your trip date:",
+            "send_time": "Send your trip time:",
+            "booking_sent": "Your booking has been sent to drivers. \n\n",
+            "booking_details": "You have received a booking from the passenger {name}.\n\n"
+                               "Departure point: {location}\n"
+                               "Destination point: {destination}\n\n"
+                               "Passengers count: {passengers_count}\n"
+                               "Baggage: {baggage}\n"
+                               "Child seat: {child_seat}\n\n"
+                               "Date: {date}\n"
+                               "Time: {time}\n\n"
+                               "To accept the booking, click the button below.",
+
+            "booking_accepted_driver": "Booking from {name} accepted.\n\n"
+                                       "Client's telegram: @{telegram_username}.\n"
+                                       "Please, contact the client.",
+            "booking_accepted_passenger": "Your booking has been accepted by the driver.\n\n"
+                                          "Driver will contact you soon.",
+        }
     },
 
     "yes": "Yes",
@@ -146,7 +170,11 @@ dataset = {
         "enter_location": "Please, send your location.",
     },
 
+    "action_canceled": "Action canceled.",
+
     "keyboards": {
+        "cancel": "❌ Cancel",
+
         "register": {
             "register": "Register",
         },
@@ -185,6 +213,10 @@ dataset = {
             "im_arrived": "🚗 I'm arrived",
             "start_trip": "🚕 Start trip",
             "end_trip": "🏁 End trip",
+
+            "booking": {
+                "submit": "✅ Submit",
+            }
         },
     }
 }
