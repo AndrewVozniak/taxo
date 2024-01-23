@@ -2,9 +2,11 @@ import telebot
 import config
 
 from database import connector
-from services import start_service, change_language_service, menu_service, search_service, call_service
+from jobs.main import scheduler, send_advertisements
+from services import start_service, change_language_service, menu_service, search_service, call_service, admin_service
 from services.register import register_service
 from services.update import passenger_info_service, driver_info_service
+from translations.core import translations, get_language
 
 bot = telebot.TeleBot(config.bot_config["token"])
 connection, cursor = connector.init(
@@ -18,6 +20,22 @@ connection, cursor = connector.init(
 @bot.message_handler(commands=["start"])
 def start(message):
     start_service.init(bot, message, cursor, message.from_user.id)
+
+
+@bot.message_handler(commands=["admin"])
+def admin(message):
+    try:
+        admin_password = message.text.split(" ")[1]
+
+    except IndexError:
+        admin_password = None
+
+    admin_service.init(bot, cursor, message.from_user.id, admin_password)
+
+
+@bot.message_handler(commands=["publish_ad"])
+def publish_ad(message):
+    admin_service.publish_ad(bot, cursor, message)
 
 
 @bot.message_handler(content_types=["text"])
@@ -38,6 +56,11 @@ def callback_inline(call):
 
     elif call.data == "get_nearby_drivers_count":
         search_service.get_nearby_drivers_count(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data == "get_charity_wallet":
+        bot.send_message(call.message.chat.id,
+                         translations[get_language(call.from_user.id)]["charity_wallet"]
+                         .format(charity_wallet=config.CHARITY_WALLET))
 
     # ! PASSENGER
     elif call.data == "main_menu_passenger_my_profile":
@@ -95,5 +118,14 @@ def callback_inline(call):
     elif call.data.startswith("sub_booking"):
         call_service.submit_booking(bot, call.message, cursor, call.from_user.id, call.data.split("_")[2])
 
+    # ! ADMIN
+    elif call.data == "change_charity_wallet":
+        admin_service.change_charity_wallet(bot, call.message, cursor, call.from_user.id)
+
+    elif call.data == "change_ad_interval":
+        admin_service.change_ad_interval(bot, call.message, cursor, call.from_user.id)
+
+
+scheduler.add_job(send_advertisements, 'interval', id='send_advertisements', hours=config.ADVERTISEMENTS_TIME_INTERVAL, args=[bot, cursor])
 
 bot.polling(none_stop=True)

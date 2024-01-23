@@ -29,6 +29,12 @@ class Passenger(Base):
     name = Column(String(100))
 
 
+class Admin(Base):
+    __tablename__ = 'admins'
+
+    id = Column(BigInteger, primary_key=True)
+
+
 class Trip(Base):
     __tablename__ = 'trips'
 
@@ -73,11 +79,11 @@ class Advertisement(Base):
     __tablename__ = 'advertisements'
 
     id = Column(Integer, primary_key=True)
-    image = Column(String)  # Path to image
-    url = Column(String)  # URL for redirection
+    image = Column(String, nullable=True)
+    text = Column(Text)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
-    is_active = Column(Boolean)
+    last_published_at = Column(DateTime, nullable=True)
 
 # Настройка движка базы данных
 engine = create_engine(f"postgresql://{database_config['user']}:{database_config['password']}@{database_config['host']}/{database_config['db']}")

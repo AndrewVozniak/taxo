@@ -10,6 +10,8 @@ dataset = {
         "error": "Please, choose one of the options.",
     },
 
+    "charity_wallet": "Charity wallet: {charity_wallet}",
+
     "register": {
         "enter_name": "Enter your name:",
         "enter_car_brand": "Enter your car brand:",
@@ -172,8 +174,34 @@ dataset = {
 
     "action_canceled": "Action canceled.",
 
+    "admin": {
+        "you_being_admin": "You became an administrator.",
+        "you_already_admin": "You are already an administrator.",
+
+        "publish_ad": {
+            "send_image_and_text": "Send a photo and text",
+            "send_start_date": "Send start date",
+            "send_end_date": "Send end date",
+            "use_format": "Use format dd.mm.yyyy hh:mm",
+            "ad_published": "Ad published."
+        },
+
+        "change_charity_wallet": {
+            "send_wallet": "Send charity wallet:",
+            "success": "Charity wallet changed successfully.",
+        },
+
+        "change_ad_interval": {
+            "send_interval": "Send ad interval (in hours):",
+            "success": "Ad interval changed successfully.",
+            "error": "Please, enter a number.",
+        }
+    },
+
     "keyboards": {
         "cancel": "❌ Cancel",
+        "change_charity_wallet": "💰 Change charity wallet",
+        "change_ad_interval": "📅 Change advertisement interval",
 
         "register": {
             "register": "Register",
@@ -192,6 +220,8 @@ dataset = {
                 "go_offline": "🔴 Go offline",
                 "get_nearby_drivers_count": "👨‍✈️ Get nearby drivers count",
             },
+
+            "get_charity_wallet": "💰 Charity",
         },
         "passenger_my_profile_menu": {
             "edit_name": "✏️ Edit name",

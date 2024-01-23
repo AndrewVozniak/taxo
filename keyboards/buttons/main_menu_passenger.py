@@ -16,5 +16,8 @@ def init(user_id):
         types.InlineKeyboardButton(
             text=translations[get_language(user_id=user_id)]["keyboards"]["main_menu"]["passenger"][
                 "get_nearby_drivers_count"],
-            callback_data="get_nearby_drivers_count")
+            callback_data="get_nearby_drivers_count"),
+        types.InlineKeyboardButton(
+            text=translations[get_language(user_id=user_id)]["keyboards"]["main_menu"]["get_charity_wallet"],
+            callback_data="get_charity_wallet")
     ]
