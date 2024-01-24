@@ -21,12 +21,18 @@ class Driver(Base):
     active_radius = Column(Integer)
     is_active = Column(Boolean)
 
+    rating = Column(Float)
+    rating_count = Column(Integer)
+
 
 class Passenger(Base):
     __tablename__ = 'passengers'
 
     id = Column(BigInteger, primary_key=True)
     name = Column(String(100))
+
+    rating = Column(Float)
+    rating_count = Column(Integer)
 
 
 class Admin(Base):
@@ -54,18 +60,6 @@ class Trip(Base):
     passenger = relationship('Passenger', backref=backref('trips', cascade='all, delete-orphan'))
 
 
-class Rating(Base):
-    __tablename__ = 'ratings'
-
-    id = Column(Integer, primary_key=True)
-    trip_id = Column(Integer, ForeignKey('trips.id'), nullable=False)
-    passenger_rating = Column(Integer)  # Assuming rating out of 5
-    driver_rating = Column(Integer)  # Assuming rating out of 5
-    rating_date = Column(DateTime)
-
-    trip = relationship('Trip', backref=backref('ratings', cascade='all, delete-orphan'))
-
-
 class Feedback(Base):
     __tablename__ = 'feedbacks'
 
@@ -84,8 +78,10 @@ class Advertisement(Base):
     end_date = Column(DateTime)
     last_published_at = Column(DateTime, nullable=True)
 
+
 # Настройка движка базы данных
-engine = create_engine(f"postgresql://{database_config['user']}:{database_config['password']}@{database_config['host']}/{database_config['db']}")
+engine = create_engine(
+    f"postgresql://{database_config['user']}:{database_config['password']}@{database_config['host']}/{database_config['db']}")
 
 # Создание таблиц в базе данных
 Base.metadata.create_all(engine)

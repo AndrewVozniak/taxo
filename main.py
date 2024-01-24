@@ -134,6 +134,7 @@ def callback_inline(call):
         admin_service.delete_feedback(bot=bot, cursor=cursor, user_id=call.from_user.id,
                                       feedback_id=call.data.split("_")[2])
 
+
 scheduler.add_job(send_advertisements, 'interval', id='send_advertisements', hours=config.ADVERTISEMENTS_TIME_INTERVAL,
                   args=[bot, cursor])
 

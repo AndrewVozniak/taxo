@@ -54,6 +54,7 @@ def get_nearby_drivers_by_filters(cursor, user_id, location, passengers_count, c
                     filtered_drivers.append({
                         "driver_id": driver["id"],
                         "name": driver["name"],
+                        "rating": driver["rating"],
                         "car_brand": driver["car_brand"],
                         "has_child_seat": translations[get_language(user_id=user_id)]["yes"],
                         "about": driver["about"],
@@ -64,6 +65,7 @@ def get_nearby_drivers_by_filters(cursor, user_id, location, passengers_count, c
                 filtered_drivers.append({
                     "driver_id": driver["id"],
                     "name": driver["name"],
+                    "rating": driver["rating"],
                     "car_brand": driver["car_brand"],
                     "has_child_seat": translations[get_language(user_id=user_id)]["no"],
                     "about": driver["about"],

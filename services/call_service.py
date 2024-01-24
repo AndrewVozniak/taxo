@@ -2,6 +2,8 @@ import random
 
 import keyboards.core
 from config import DEFAULT_WAITING_TIME_OUT, DEFAULT_ARRIVAL_TIME_OUT
+from database.actions.get_driver_rating_info import get_driver_rating_info_action
+from database.actions.get_passenger_rating_info import get_passenger_rating_info_action
 from translations.core import translations, get_language
 from database.actions.get_user_base_info import get_user_base_info_action
 from database.actions.register_trip import register_trip_action
@@ -270,6 +272,7 @@ def get_child_seat_stage(message, bot, cursor, user_id, location, destination, p
                 chat_id=message.chat.id,
                 text=translations[get_language(user_id=message.from_user.id)]["call_driver"]["driver_info"].format(
                     name=driver["name"],
+                    rating=driver["rating"],
                     car_brand=driver["car_brand"],
                     has_child_seat=driver["has_child_seat"],
                     about=driver["about"],
@@ -369,6 +372,7 @@ def get_time_stage(message, bot, cursor, user_id, location, destination, passeng
             text=translations[get_language(user_id=drivers[i]["driver_id"])]["call_driver"]["booking"][
                 "booking_details"].format(
                 name=get_user_base_info_action(cursor, user_id=user_id)["name"],
+                rating=get_user_base_info_action(cursor, user_id=user_id)["rating"],
                 location=get_info_by_coordinates(location.latitude, location.longitude),
                 destination=get_info_by_coordinates(destination.latitude, destination.longitude),
                 passengers_count=passengers_count,
@@ -455,6 +459,7 @@ def choose_driver(bot, message, cursor, user_id, driver_id):
         chat_id=driver_id,
         text=translations[get_language(user_id=driver_id)]["call_driver"]["you_were_chosen"].format(
             name=user["name"],
+            rating=user["rating"],
             location=get_info_by_coordinates(call["location"].latitude, call["location"].longitude),
             destination=get_info_by_coordinates(call["destination"].latitude, call["destination"].longitude),
             passengers_count=call["passengers_count"],
@@ -634,10 +639,127 @@ def end_trip(bot, message, cursor, user_id):
         chat_id=message.chat.id,
         text=translations[get_language(user_id=user_id)]["call_driver"]["trip_ended"],
     )
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["leave_rating"]["message"],
+    )
+    bot.register_next_step_handler_by_chat_id(message.chat.id, leave_rating_stage_driver, bot, cursor, user_id,
+                                              trip["id"])
 
     bot.send_message(
         chat_id=trip["passenger_id"],
         text=translations[get_language(user_id=trip["passenger_id"])]["call_driver"]["trip_ended"],
+    )
+    bot.send_message(
+        chat_id=trip["passenger_id"],
+        text=translations[get_language(user_id=trip["passenger_id"])]["leave_rating"]["message"],
+    )
+    # Create a new message object or similar for the passenger to use in the next step handler
+    bot.register_next_step_handler_by_chat_id(trip["passenger_id"], leave_rating_stage_passenger, bot, cursor,
+                                              trip["passenger_id"], trip["id"])
+
+
+def leave_rating_stage_driver(message, bot, cursor, user_id, trip_id):
+    if message.text not in ["1", "2", "3", "4", "5"]:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["enter_number"],
+        )
+        bot.register_next_step_handler(message, leave_rating_stage_driver, bot, cursor, user_id, trip_id)
+        return
+
+    new_rating = int(message.text)
+
+    cursor.execute("SELECT driver_id, passenger_id FROM trips WHERE id = %s", (trip_id,))
+    trip = cursor.fetchone()
+
+    if trip is None:
+        print("Trip not found")
+        return
+
+    passenger_id = trip[1]
+
+    raw_data = get_passenger_rating_info_action(cursor, passenger_id)
+
+    rating = raw_data["rating"]
+    rating_count = raw_data["rating_count"]
+
+    if rating is not None and rating_count is not None:
+        new_rating = (rating * rating_count + new_rating) / (rating_count + 1)
+        rating_count += 1
+
+    elif rating is None and rating_count is None:
+        new_rating = new_rating
+        rating_count = 1
+
+    else:
+        print("Error in rating calculation")
+        return
+
+    update_action(cursor, "passengers", "rating", new_rating, passenger_id)
+    update_action(cursor, "passengers", "rating_count", rating_count, passenger_id)
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["leave_rating"]["success"],
+    )
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["menus"]["main_menu"]["message"],
+        reply_markup=keyboards.core.main_menu_keyboard(user_id, "driver"),
+    )
+
+
+def leave_rating_stage_passenger(message, bot, cursor, user_id, trip_id):
+    if message.text not in ["1", "2", "3", "4", "5"]:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=translations[get_language(user_id=user_id)]["errors"]["enter_number"],
+        )
+        bot.register_next_step_handler(message, leave_rating_stage_passenger, bot, cursor, user_id, trip_id)
+        return
+
+    new_rating = int(message.text)
+
+    cursor.execute("SELECT driver_id, passenger_id FROM trips WHERE id = %s", (trip_id,))
+    trip = cursor.fetchone()
+
+    if trip is None:
+        print("Trip not found")
+        return
+
+    driver_id = trip[0]
+
+    raw_data = get_driver_rating_info_action(cursor, driver_id)
+
+    rating = raw_data["rating"]
+    rating_count = raw_data["rating_count"]
+
+    if rating is not None and rating_count is not None:
+        new_rating = (rating * rating_count + new_rating) / (rating_count + 1)
+        rating_count += 1
+
+    elif rating is None and rating_count is None:
+        new_rating = new_rating
+        rating_count = 1
+
+    else:
+        print("Error in rating calculation")
+        return
+
+    update_action(cursor, "drivers", "rating", new_rating, driver_id)
+    update_action(cursor, "drivers", "rating_count", rating_count, driver_id)
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["leave_rating"]["success"],
+    )
+
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=translations[get_language(user_id=user_id)]["menus"]["main_menu"]["message"],
+        reply_markup=keyboards.core.main_menu_keyboard(user_id, "passenger"),
     )
 
 

@@ -98,7 +98,7 @@ dataset = {
 
         "drivers_list": "Drivers list:",
         "driver_info": "Name: {name}\nCar brand: {car_brand}\nChild seat: {has_child_seat}"
-                       "\nAbout: {about}\nDistance: {distance} km",
+                       "\nAbout: {about}\nRating: {rating}\nDistance: {distance} km",
 
         "no_drivers": "Unfortunately, there are no drivers near you. Try again later.",
 
@@ -115,6 +115,7 @@ dataset = {
                            "\n\nPassengers count: {passengers_count}"
                            "\nBaggage: {baggage}"
                            "\nChild seat: {child_seat}"
+                           "\nPassenger's rating: {rating}"
                            "\n\nTo accept the request, click the button below.",
 
         "trip_accepted_passenger": "Your order has been accepted by the driver {name}.",
@@ -137,7 +138,7 @@ dataset = {
 
         "trip_started_driver": "You started the trip. \n\n When you arrive at the destination, click the button below.",
         "trip_started_passenger": "The trip has started.",
-        "trip_ended": "The trip is over. Thank you for using our service!",
+        "trip_ended": "The trip is over.",
 
         "booking": {
             "send_date": "Send your trip date:",
@@ -151,6 +152,7 @@ dataset = {
                                "Child seat: {child_seat}\n\n"
                                "Date: {date}\n"
                                "Time: {time}\n\n"
+                               "Passenger's rating: {rating}\n"
                                "To accept the booking, click the button below.",
 
             "booking_accepted_driver": "Booking from {name} accepted.\n\n"
@@ -159,6 +161,11 @@ dataset = {
             "booking_accepted_passenger": "Your booking has been accepted by the driver.\n\n"
                                           "Driver will contact you soon.",
         }
+    },
+
+    "leave_rating": {
+        "message": "Leave your rating:",
+        "success": "Thank you for using our service!",
     },
 
     "yes": "Yes",
