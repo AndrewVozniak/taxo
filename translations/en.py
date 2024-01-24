@@ -10,7 +10,14 @@ dataset = {
         "error": "Please, choose one of the options.",
     },
 
-    "charity_wallet": "Charity wallet: {charity_wallet}",
+    "charity": {
+        "passenger": "The best gratitude for us is a repost and telling friends about our service.\n\n",
+        "driver": "The best gratitude for us is a repost and telling friends about our service.\n\n"
+                  "If you want to support us financially, you can do it by sending any amount to our charity "
+                  "wallet:\n{charity_wallet}\n\n Or by giving us feedback",
+        "send_feedback": "Send feedback:",
+        "feedback_sent": "Feedback sent.",
+    },
 
     "register": {
         "enter_name": "Enter your name:",
@@ -178,6 +185,15 @@ dataset = {
         "you_being_admin": "You became an administrator.",
         "you_already_admin": "You are already an administrator.",
 
+        "get_feedbacks": {
+            "no_feedbacks": "No feedbacks.",
+            "feedback": "Feedback from user #{id}:\n\n{feedback}",
+        },
+
+        "delete_feedback": {
+            "success": "Feedback deleted successfully.",
+        },
+
         "publish_ad": {
             "send_image_and_text": "Send a photo and text",
             "send_start_date": "Send start date",
@@ -200,8 +216,12 @@ dataset = {
 
     "keyboards": {
         "cancel": "❌ Cancel",
+        "delete_feedback": "❌ Delete feedback",
         "change_charity_wallet": "💰 Change charity wallet",
         "change_ad_interval": "📅 Change advertisement interval",
+
+        "feedback": "📝 Feedback",
+        "get_feedbacks": "📝 Get feedbacks",
 
         "register": {
             "register": "Register",
@@ -221,7 +241,7 @@ dataset = {
                 "get_nearby_drivers_count": "👨‍✈️ Get nearby drivers count",
             },
 
-            "get_charity_wallet": "💰 Charity",
+            "charity": "💰 Charity",
         },
         "passenger_my_profile_menu": {
             "edit_name": "✏️ Edit name",

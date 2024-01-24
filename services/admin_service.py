@@ -25,6 +25,10 @@ def init(bot, cursor, user_id, entered_password):
             text=translations[get_language(user_id=user_id)]["keyboards"]["change_charity_wallet"],
             callback_data="change_charity_wallet"
         ))
+        keyboards.add(types.InlineKeyboardButton(
+            text=translations[get_language(user_id=user_id)]["keyboards"]["get_feedbacks"],
+            callback_data="get_feedbacks"
+        ))
 
         bot.send_message(user_id,
                          translations[get_language(user_id=user_id)]["admin"]["you_already_admin"],
@@ -195,3 +199,48 @@ def get_end_date_stage(message, bot, cursor, user_id, image, text, start_date):
                          reply_markup=cancel_keyboard(user_id))
         bot.register_next_step_handler(message, get_end_date_stage, bot, cursor, user_id, image, text, start_date)
         return
+
+
+def get_feedbacks(bot, cursor, user_id):
+    if not is_admin(cursor, user_id):
+        return
+
+    cursor.execute("SELECT * FROM feedbacks")
+    data = cursor.fetchall()
+
+    if not data:
+        bot.send_message(user_id,
+                         translations[get_language(user_id=user_id)]["admin"]["get_feedbacks"]["no_feedbacks"],
+                         reply_markup=types.ReplyKeyboardRemove())
+        return
+
+    for feedback in data:
+        keyboard = types.InlineKeyboardMarkup()
+        keyboard.add(types.InlineKeyboardButton(
+            text=translations[get_language(user_id=user_id)]["keyboards"]["delete_feedback"],
+            callback_data=f"delete_feedback_{feedback[0]}"
+        ))
+
+        feedback_message = translations[get_language(user_id=user_id)]["admin"]["get_feedbacks"]["feedback"]
+        formatted_message = feedback_message.format(id=feedback[1], feedback=feedback[2])
+
+        bot.send_message(user_id, formatted_message, reply_markup=keyboard)
+
+
+def delete_feedback(bot, cursor, user_id, feedback_id):
+    if not is_admin(cursor, user_id):
+        return
+
+    try:
+        cursor.execute("DELETE FROM feedbacks WHERE id = %s", (feedback_id,))
+        cursor.connection.commit()
+    except Exception as e:
+        print(e)
+        bot.send_message(user_id,
+                         translations[get_language(user_id=user_id)]["errors"]["unknown"],
+                         reply_markup=types.ReplyKeyboardRemove())
+        return
+
+    bot.send_message(user_id,
+                     translations[get_language(user_id=user_id)]["admin"]["delete_feedback"]["success"],
+                     reply_markup=types.ReplyKeyboardRemove())

@@ -66,13 +66,12 @@ class Rating(Base):
     trip = relationship('Trip', backref=backref('ratings', cascade='all, delete-orphan'))
 
 
-class Charity(Base):
-    __tablename__ = 'charity'
+class Feedback(Base):
+    __tablename__ = 'feedbacks'
 
     id = Column(Integer, primary_key=True)
-    donor_id = Column(BigInteger, ForeignKey('passengers.id'))
-    amount = Column(Float)
-    donation_date = Column(DateTime)
+    user_id = Column(BigInteger, ForeignKey('drivers.id'))
+    feedback = Column(Text)
 
 
 class Advertisement(Base):

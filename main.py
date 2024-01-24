@@ -3,7 +3,8 @@ import config
 
 from database import connector
 from jobs.main import scheduler, send_advertisements
-from services import start_service, change_language_service, menu_service, search_service, call_service, admin_service
+from services import start_service, change_language_service, menu_service, search_service, call_service, admin_service, \
+    charity_service
 from services.register import register_service
 from services.update import passenger_info_service, driver_info_service
 from translations.core import translations, get_language
@@ -57,10 +58,8 @@ def callback_inline(call):
     elif call.data == "get_nearby_drivers_count":
         search_service.get_nearby_drivers_count(bot, call.message, cursor, call.from_user.id)
 
-    elif call.data == "get_charity_wallet":
-        bot.send_message(call.message.chat.id,
-                         translations[get_language(call.from_user.id)]["charity_wallet"]
-                         .format(charity_wallet=config.CHARITY_WALLET))
+    elif call.data == "charity":
+        charity_service.init(bot, cursor, call.message, call.from_user.id)
 
     # ! PASSENGER
     elif call.data == "main_menu_passenger_my_profile":
@@ -118,6 +117,9 @@ def callback_inline(call):
     elif call.data.startswith("sub_booking"):
         call_service.submit_booking(bot, call.message, cursor, call.from_user.id, call.data.split("_")[2])
 
+    elif call.data.startswith("send_feedback"):
+        charity_service.send_feedback(bot, call.message, cursor, call.from_user.id)
+
     # ! ADMIN
     elif call.data == "change_charity_wallet":
         admin_service.change_charity_wallet(bot, call.message, cursor, call.from_user.id)
@@ -125,7 +127,14 @@ def callback_inline(call):
     elif call.data == "change_ad_interval":
         admin_service.change_ad_interval(bot, call.message, cursor, call.from_user.id)
 
+    elif call.data == "get_feedbacks":
+        admin_service.get_feedbacks(bot=bot, cursor=cursor, user_id=call.from_user.id)
 
-scheduler.add_job(send_advertisements, 'interval', id='send_advertisements', hours=config.ADVERTISEMENTS_TIME_INTERVAL, args=[bot, cursor])
+    elif call.data.startswith("delete_feedback"):
+        admin_service.delete_feedback(bot=bot, cursor=cursor, user_id=call.from_user.id,
+                                      feedback_id=call.data.split("_")[2])
+
+scheduler.add_job(send_advertisements, 'interval', id='send_advertisements', hours=config.ADVERTISEMENTS_TIME_INTERVAL,
+                  args=[bot, cursor])
 
 bot.polling(none_stop=True)
